@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from 'next/image'
-import { DashboardAnalytics } from "@/app/dashboard/dashboard-analytics"
+
 
 export const metadata: Metadata = {
   title: "Posture Analytics Dashboard",
@@ -45,64 +45,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-			  <DashboardAnalytics />
-			  
-			  {/* Posture Tips Section */}
-<div className="space-y-6">
-  <h2 className="text-2xl font-bold">Your Personalized Posture Guide</h2>
-  
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-      <div className="text-3xl mb-3">⚡</div>
-      <h3 className="font-semibold text-lg mb-2">Priority Fix</h3>
-      <p className="text-sm text-muted-foreground mb-2">Your neck tends to lean forward at 2PM</p>
-      <p className="text-xs font-medium text-green-500">Quick win: Raise monitor height by 2 inches</p>
-    </div>
-
-    <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-      <div className="text-3xl mb-3">🎯</div>
-      <h3 className="font-semibold text-lg mb-2">Daily Goal</h3>
-      <p className="text-sm text-muted-foreground mb-2">Stand up 5 times during work hours</p>
-      <p className="text-xs font-medium text-green-500">Current progress: 3/5 completed</p>
-    </div>
-
-    <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-      <div className="text-3xl mb-3">💪</div>
-      <h3 className="font-semibold text-lg mb-2">Strength Builder</h3>
-      <p className="text-sm text-muted-foreground mb-2">2-minute shoulder rolls every hour</p>
-      <p className="text-xs font-medium text-green-500">Reduces your common shoulder tension</p>
-    </div>
-
-    <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-      <div className="text-3xl mb-3">🌟</div>
-      <h3 className="font-semibold text-lg mb-2">Next Achievement</h3>
-      <p className="text-sm text-muted-foreground mb-2">2 more hours of good posture</p>
-      <p className="text-xs font-medium text-green-500">Unlock: "Perfect Posture Pro" badge</p>
-    </div>
-  </div>
-
-  <div className="mt-8 p-6 rounded-lg border bg-card">
-    <h3 className="font-semibold text-lg mb-4">Today's Focus Areas</h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="flex items-start gap-3">
-        <div className="h-2 w-2 rounded-full bg-blue-500 mt-2" />
-        <div>
-          <p className="font-medium">Morning Routine</p>
-          <p className="text-sm text-muted-foreground">Start with 5 minutes of desk stretches</p>
-        </div>
-      </div>
-      <div className="flex items-start gap-3">
-        <div className="h-2 w-2 rounded-full bg-green-500 mt-2" />
-        <div>
-          <p className="font-medium">Afternoon Check</p>
-          <p className="text-sm text-muted-foreground">Reset posture after lunch break</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-			  
+ 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-6 rounded-lg border bg-card">
             <div className="flex items-center gap-4 mb-4">

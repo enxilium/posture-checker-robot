@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from 'next/image'
 import { DashboardAnalytics } from "@/app/dashboard/dashboard-analytics"
+import { PostureTips } from "@/app/dashboard/posture-tips"
 
 export const metadata: Metadata = {
   title: "Posture Analytics Dashboard",
