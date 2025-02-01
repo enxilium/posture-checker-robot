@@ -2,19 +2,18 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  background-color:#45a049;
+  background-color: #1e293b; /* Dark background */
+  color: #f8f8f8; /* Light text */
   margin: 0;
   padding: 0;
 }
 
 .form-container {
-  max-width: 400px;
+  max-width: 100%;
   margin: 80px auto;
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.232);
   animation: slide-in 0.5s ease-in-out;
+  color: #f8f8f8;
 }
 
 @keyframes slide-in {
@@ -29,11 +28,33 @@ body {
   }
 }
 
+.stats-container {
+  max-width: 100%;
+  margin: 40px auto;
+  padding: 20px;
+  animation: slide-in 0.5s ease-in-out;
+  color: #f8f8f8;
+}
+
+.stats-numbers {
+  margin-bottom: 20px;
+}
+
+.stats-numbers p {
+  font-size: 18px;
+  color: #f8f8f8; /* Light text color */
+}
+
+#postureChart {
+  max-width: 100%;
+  height: auto;
+}
+
 .form-container h2 {
   text-align: center;
   margin-top: 0;
   margin-bottom: 20px;
-  color: #333333;
+  color: #f8f8f8; /* Light text color */
 }
 
 .form-group {
@@ -44,28 +65,130 @@ body {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #555555;
+  color: #cbd5e0; /* Lighter label color */
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px 0px;
-  border: 1px solid #cccccc;
+  padding: 8px 10px; /* Add horizontal padding for better look */
   border-radius: 4px;
   font-size: 14px;
-  color: #333333;
+  color: #e2e8f0; /* Light input text color */
+  background-color: #1e293b; /* unify with body background color */
 }
 
 .form-group input[type="submit"] {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #63b3ed; /* Blue accent color */
+  color: #000000; /* Dark text on accent color */
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 }
 
 .form-group input[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #000000; /* Slightly darker blue on hover */
+}
+
+#user-profile,
+#user-stats,
+#all-users,
+#posture-tips { /* Apply dark style to all container sections */
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: none;
+}
+
+#user-profile h3,
+#user-stats h3,
+#all-users h3,
+#posture-tips h3 {
+    margin-top: 0;
+    color: #f8f8f8; /* Light text color */
+}
+
+#user-profile p,
+#user-stats p,
+#all-users p,
+#posture-tips p,
+#posture-tips li { /* Target list items in posture tips too */
+    margin-bottom: 10px;
+    color: #e2e8f0; /* Lighter text color */
+}
+
+body.home {
+    background-color: #1e293b; /* Dark background for home page */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.home-container {
+    text-align: center;
+    padding: 30px;
+    color: #f8f8f8; /* Light text color */
+    max-width: 100%;
+}
+
+.home-container h2 {
+    color: #f8f8f8; /* Light text color */
+    margin-bottom: 20px;
+}
+
+.home-container p {
+    color: #e2e8f0; /* Lighter text color */
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 1.2em; /* Increased font size for wider text */
+}
+
+#user-profile,
+#user-stats,
+#all-users,
+#posture-tips {
+    margin: 20px auto;
+    max-width: 100%;
+}
+
+#logout-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #1a202c; /* Dark text on accent color */
+    background-color: #63b3ed; /* Blue accent color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#logout-button:hover {
+    background-color: #4299e1; /* Slightly darker blue on hover */
 }
 
 
+
+#all-users ul {
+    padding-left: 20px;
+    color: #e2e8f0; /* Lighter text color */
+}
+
+#all-users li,
+#posture-tips li {
+    margin-bottom: 5px;
+}
+
+/* Style for posture notification */
+#posture-notification {
+    color: #ff4b4b; /* Red color for alert */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+/* Style charts for dark theme */
+#scoreChart,
+#timeChart {
+    color: #f8f8f8; /* Light text color for chart labels */
+}

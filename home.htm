@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="home">
+    <div class="home-container">
+        <h2>This is Fernando!</h2>
+        <p>Your personal posture regulator</p>
+
+        <div id="user-profile">
+            <h3>User Profile</h3>
+            <p><strong>Name:</strong> <span id="user-name"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Username:</strong> <span id="user-username"></span></p>
+            <p><strong>Posture Status:</strong> <span id="user-db-posture-status"></span></p>
+        </div>
+
+        <div id="user-stats">
+            <h3>Your Stats</h3>
+            <div id="posture-stats">
+                <p><strong>Posture Status:</strong> <span id="posture-status"></span></p>
+                <p><strong>User Posture Status:</strong> <span id="user-posture-status-text"></span></p>
+            </div>
+            <div id="posture-notification" style="color: red; display: none;">
+                <p><strong>Posture Alert:</strong> Bad posture detected!</p>
+            </div>
+        </div>
+
+        <div id="posture-graphs">
+            <h3>Posture Stats Over Time</h3>
+            <div id="posture-score-graph">
+                <h3>Posture Score Over Time</h3>
+                <canvas id="scoreChart" width="400" height="200"></canvas>
+                {/* Chart.js graph for Posture Score will be rendered here */}
+            </div>
+            <div id="posture-time-graph">
+                <h3>Good vs Bad Posture Time</h3>
+                <canvas id="timeChart" width="400" height="200"></canvas>
+                {/* Chart.js graph for Good/Bad Posture Time will be rendered here */}
+            </div>
+        </div>
+
+        <div id="posture-improvement">
+            <h3>Improve Your Posture</h3>
+                <p>Sit up straight with your shoulders relaxed.</p>
+                <p>Keep your feet flat on the floor or on a footrest.</p>
+                <p>Avoid crossing your legs.</p>
+                <p>Take breaks to stand up and stretch regularly.</p>
+                <p>Make sure your workstation is set up ergonomically.</p>
+        </div>
+
+        <div id="all-users">
+            <h3>All Registered Users</h3>
+            <ul id="users-list">
+            </ul>
+        </div>
+
+        <div id="posture-tips">
+            <h3>Posture Improvement Tips</h3>
+            <ul>
+                <li><b>Regular Breaks:</b> Stand up and stretch every 30 minutes.</li>
+                <li><b>Ergonomic Setup:</b> Ensure your monitor is at eye level, and your chair supports your lower back.</li>
+                <li><b>Chair Exercises:</b> Perform simple stretches at your desk.</li>
+                <li><b>Wall Test:</b> Stand against a wall to check and correct your posture.</li>
+            </ul>
+        </div>
+
+        <button id="logout-button">Logout</button>
+    </div>
+
+    <script>
+        function fetchPostureStatus() {
+            fetch('http://localhost:5001/posture_status')
+                .then(response => response.json())
+                .then(data => {
+                    const postureStatusSpan = document.getElementById('posture-status');
+                    const userPostureStatusSpan = document.getElementById('user-posture-status-text');
+                    const notification = document.getElementById('posture-notification');
+
+                    postureStatusSpan.textContent = data.status;
+                    userPostureStatusSpan.textContent = data.user_posture_status;
+
+                    if (data.status === 'bad') {
+                        notification.style.display = 'block';
+                        userPostureStatusSpan.textContent = "Bad posture detected. Please correct your posture!";
+                    } else {
+                        notification.style.display = 'none';
+                        userPostureStatusSpan.textContent = "Good posture detected!";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching posture status:', error);
+                });
+        }
+
+        // Fetch posture status every 5 seconds (adjust as needed)
+        setInterval(fetchPostureStatus, 5000);
+        console.log("Posture status update interval started");
+
+        function fetchUserStats() {
+            fetch('http://localhost:5001/user_stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById('user-username').textContent = data.username || 'N/A';
+                        document.getElementById('user-db-posture-status').textContent = data.posture_status || 'N/A';
+                    } else {
+                        console.error('Error fetching user stats or user not found');
+                        document.getElementById('user-username').textContent = 'N/A';
+                        document.getElementById('user-db-posture-status').textContent = 'N/A';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user stats:', error);
+                    document.getElementById('user-username').textContent = 'N/A';
+                    document.getElementById('user-db-posture-status').textContent = 'N/A';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchUserStats(); // Fetch user stats on page load
+
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            if (userData && userData.length > 0) {
+                const lastUser = userData[userData.length - 1];
+                document.getElementById('user-name').textContent = lastUser.name || 'N/A';
+                document.getElementById('user-email').textContent = lastUser.email || 'N/A';
+
+                const usersList = document.getElementById('users-list');
+                userData.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${user.name} (${user.email})`;
+                    usersList.appendChild(listItem);
+                });
+            } else {
+                document.getElementById('user-profile').innerHTML = "<p>No user data available.</p>";
+                document.getElementById('all-users').style.display = 'none'; // Hide user list if no data
+            }
+
+            document.getElementById('logout-button').addEventListener('click', function () {
+                localStorage.removeItem('userData');
+                window.location.href = 'login.htm';
+            });
+        });
+
+        function createPostureScoreChart(labels, data) {
+            const scoreChartCanvas = document.getElementById('scoreChart').getContext('2d');
+            const scoreChart = new Chart(scoreChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Posture Score',
+                        data: data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPostureTimeChart(labels, goodData, badData) {
+            const timeChartCanvas = document.getElementById('timeChart').getContext('2d');
+            const timeChart = new Chart(timeChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Good Posture Time (hours)',
+                        data: goodData,
+                        backgroundColor: 'green'
+                    }, {
+                        label: 'Bad Posture Time (hours)',
+                        data: badData,
+                        backgroundColor: 'red'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function fetchPostureStatus() {
+            fetch('http://localhost:5001/posture_status')
+                .then(response => response.json())
+                .then(data => {
+                    const postureStatusSpan = document.getElementById('posture-status');
+                    const userPostureStatusSpan = document.getElementById('user-posture-status-text');
+                    const notification = document.getElementById('posture-notification');
+
+                    postureStatusSpan.textContent = data.status;
+                    userPostureStatusSpan.textContent = data.user_posture_status;
+
+                    if (data.status === 'bad') {
+                        notification.style.display = 'block';
+                        userPostureStatusSpan.textContent = "Bad posture detected. Please correct your posture!";
+                    } else {
+                        notification.style.display = 'none';
+                        userPostureStatusSpan.textContent = "Good posture detected!";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching posture status:', error);
+                });
+        }
+
+        // Fetch posture status every 5 seconds (adjust as needed)
+        setInterval(fetchPostureStatus, 5000);
+
+        function createPostureScoreChart(labels, data) {
+            const scoreChartCanvas = document.getElementById('scoreChart').getContext('2d');
+            const scoreChart = new Chart(scoreChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Posture Score',
+                        data: data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPostureTimeChart(labels, goodData, badData) {
+            const timeChartCanvas = document.getElementById('timeChart').getContext('2d');
+            const timeChart = new Chart(timeChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Good Posture Time (hours)',
+                        data: goodData,
+                        backgroundColor: 'green'
+                    }, {
+                        label: 'Bad Posture Time (hours)',
+                        data: badData,
+                        backgroundColor: 'red'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function fetchPostureHistory() {
+            fetch('http://localhost:5001/posture_history')
+                .then(response => response.json())
+                .then(historyData => {
+                    if (historyData && historyData.labels && historyData.scoreData && historyData.goodTimeData && historyData.badTimeData) {
+                        createPostureScoreChart(historyData.labels, historyData.scoreData);
+                        createPostureTimeChart(historyData.labels, historyData.goodTimeData, historyData.badTimeData);
+                    } else {
+                        console.error('Invalid posture history data received:', historyData);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching posture history:', error);
+                });
+        }
+
+        function fetchPostureStatus() {
+            fetch('http://localhost:5001/posture_status')
+                .then(response => response.json())
+                .then(data => {
+                    const postureStatusSpan = document.getElementById('posture-status');
+                    const userPostureStatusSpan = document.getElementById('user-posture-status-text');
+                    const notification = document.getElementById('posture-notification');
+
+                    postureStatusSpan.textContent = data.status;
+                    userPostureStatusSpan.textContent = data.user_posture_status;
+
+                    if (data.status === 'bad') {
+                        notification.style.display = 'block';
+                    } else {
+                        notification.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching posture status:', error);
+                });
+        }
+
+        fetchPostureStatus(); // Fetch posture status on page load
+        fetchPostureHistory(); // Fetch posture history charts on page load
+        setInterval(fetchPostureStatus, 5000); // Update posture status every 5 seconds
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // ... existing code for user data ...
+            fetchPostureStatus(); // Fetch posture status and charts on page load
+            fetchPostureHistory(); // Fetch posture history charts on page load
+
+        });
+    </script>
+</body>
+
+</html>
