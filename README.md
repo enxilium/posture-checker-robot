@@ -16,8 +16,10 @@ const firebaseConfig = {
   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "YOUR_APP_ID",
 };
+```
 
 ## Features
+
 - Real-time posture monitoring using sensors
 - Data validation to ensure accuracy
 - Stores posture data in both local storage and Firebase Realtime Database
@@ -36,6 +38,7 @@ To use the posture detection system, follow these steps:
 ## Data Validation
 
 The system validates the following posture-related inputs:
+
 - **Angle Measurements:** Ensures angles fall within an acceptable posture range.
 - **Sensor Readings:** Filters out noise and erroneous data from sensors.
 - **Timestamp Logging:** Ensures correct time sequencing for posture analysis.
@@ -56,15 +59,16 @@ This system relies on Firebase for data storage. Ensure you include the Firebase
 ```html
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+```
 
-License
+## License
 
 Feel free to use and modify the code according to your needs. Contributions are welcome!
 
-Credits
+## Credits
 
 This posture detection robot was developed by [Your Name].
 
-For more projects, visit GitHub.
+For more projects, visit [GitHub](https://github.com/yourusername).
 
 If you have any questions or suggestions, please feel free to reach out to me at [your.email@example.com].
