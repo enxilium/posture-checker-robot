@@ -7,8 +7,8 @@ resource "aws_db_instance" "default" {
     engine = "postgres"
     instance_class = "db.t3.micro"
     allocated_storage = 20
-    username = "enxilium"
-    password = "posture-checker-123"
+    username = var.username
+    password = var.password
     publicly_accessible = false
     skip_final_snapshot = true
 }

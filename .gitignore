@@ -1,1 +1,6 @@
 .terraform
+prod.tfvars
+/.next
+/node_modules
+.env
+next-env.d.ts
