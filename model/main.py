@@ -2,6 +2,7 @@ import cv2
 import time
 import math as m
 import mediapipe as mp
+import requests
 
 def calculate_angle(shoulder, hip):
     delta_x = hip[0] - shoulder[0]
@@ -12,7 +13,11 @@ def calculate_angle(shoulder, hip):
 
 def sendWarning():
     print("Warning: Poor posture detected!")
-    # Optionally, add alerts like sound or notifications here
+    try:
+        # Alternatively, you can use a shared mechanism like a database or messaging queue.
+        requests.post("http://127.0.0.1:5000/ping", data="bad posture")
+    except Exception as e:
+        print("Error sending posture warning:", e)
 
 # Initialize MediaPipe Pose
 mp_pose = mp.solutions.pose
