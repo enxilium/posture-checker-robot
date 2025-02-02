@@ -19,7 +19,7 @@ export default function Home() {
         </div>
 
         <nav className="flex items-center gap-4 py-4">
-         <Link href="/dashboard">
+         <Link href="/login">
   <button className="your-button-classes">
     Get Started
   </button>
