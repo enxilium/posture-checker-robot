@@ -6,8 +6,7 @@ import { DashboardAnalytics } from "./dashboard-analytics";
 
 export default function DashboardPage() {
   const searchParams = useSearchParams();
-  const userId = searchParams.get("userId");
-
+  const userId = searchParams?.get("userId");
   const [userData, setUserData] = useState<any>(null);
   const [analyticsData, setAnalyticsData] = useState<any>(null);
 
@@ -17,6 +16,13 @@ export default function DashboardPage() {
       fetchAnalytics();
     }
   }, [userId]);
+
+  // After fetching userData, update the cache file on the server.
+  useEffect(() => {
+    if (userData && userId) {
+      updateCache();
+    }
+  }, [userData, userId]);
 
   async function fetchUserData() {
     try {
@@ -28,7 +34,6 @@ export default function DashboardPage() {
     }
   }
 
-  // This endpoint should return analytics data based on the userId (e.g. posture history stats)
   async function fetchAnalytics() {
     try {
       const res = await fetch(`/api/get-past-user-posture?userId=${userId}`);
@@ -36,6 +41,22 @@ export default function DashboardPage() {
       setAnalyticsData(data);
     } catch (error) {
       console.error("Error fetching analytics data:", error);
+    }
+  }
+
+  async function updateCache() {
+    try {
+      await fetch(`/api/cache-user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          name: userData?.name,
+          email: userData?.email,
+        }),
+      });
+    } catch (error) {
+      console.error("Error updating cache file:", error);
     }
   }
 
@@ -57,7 +78,6 @@ export default function DashboardPage() {
               <p className="text-gray-600">{displayEmail}</p>
             </div>
           </div>
-          {/* You can add more header elements if needed */}
         </header>
 
         <section>
@@ -68,7 +88,6 @@ export default function DashboardPage() {
         <section className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-4">Additional Dashboard Content</h3>
           <p>
-            {/* Replace with additional dashboard content or charts */}
             This section can include more details about your posture records,
             trends over time, or any other relevant information fetched from your database.
           </p>
