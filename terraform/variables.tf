@@ -8,3 +8,13 @@ variable "password" {
   type        = string
   sensitive   = true
 }
+
+variable "webapp_image" {
+  description = "The image for the webapp container"
+  type        = string
+}
+
+variable "flask_image" {
+  description = "The image for the flask container"
+  type        = string
+}

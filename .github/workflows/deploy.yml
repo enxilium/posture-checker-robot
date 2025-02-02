@@ -3,51 +3,68 @@ name: Docker Build & Deploy
 on:
   push:
     branches:
-      - main  # Runs workflow on push to the main branch
+      - main
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest  # Use Ubuntu virtual machine for the pipeline
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout code from the repository
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Docker
+      # Step 2: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      # Step 3: Build the Docker image
-      - name: Build Docker Image
+      # Step 3: Build Docker image for Next.js frontend
+      - name: Build Next.js Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker:${{ github.sha }} .
+          docker build -f Dockerfile.nextjs -t ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-next:${{ github.sha }} .
 
-      # Step 4: Log in to Docker Hub (or AWS ECR if using that)
+      # Step 4: Build Docker image for Flask backend
+      - name: Build Flask Docker Image
+        run: |
+          docker build -f Dockerfile.flask -t ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-flask:${{ github.sha }} .
+
+      # Step 5: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}  # GitHub Secret
           password: ${{ secrets.DOCKER_PASSWORD }}  # GitHub Secret
 
-      # Step 5: Push the Docker image to Docker Hub
-      - name: Push Docker Image
+      # Step 6: Push the Next.js Docker image to Docker Hub
+      - name: Push Next.js Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-next:${{ github.sha }}
 
-      # Step 6: Deploy Docker Container to EC2
+      # Step 7: Push the Flask Docker image to Docker Hub
+      - name: Push Flask Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-flask:${{ github.sha }}
+
+      # Step 8: Update Terraform Variables with the new Docker image tags
+      - name: Update Terraform Variables
+        working-directory: ./terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve \
+            -var="webapp_image=${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-next:${{ github.sha }}" \
+            -var="flask_image=${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker-flask:${{ github.sha }}"
+
+      # Step 9: Deploy Docker Containers to EC2
       - name: Deploy to EC2
         env:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: "ec2-user"  # Adjust if you're using a different username
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          echo "$PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST <<EOF
-            # Pull the Docker image on the EC2 instance
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker:${{ github.sha }}
-            
-            # Run the Docker container (assuming port 80 is open on your EC2)
-            sudo docker run -d -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/fernando-posture-checker:${{ github.sha }}
+          echo "$PRIVATE_KEY" > ec2_key.pem
+          chmod 600 ec2_key.pem
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ubuntu@$EC2_HOST << 'EOF'
+            cd /home/ubuntu/app
+            docker-compose pull
+            docker-compose up -d --build
+            exit
           EOF

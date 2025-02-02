@@ -4,3 +4,4 @@ prod.tfvars
 /node_modules
 .env
 next-env.d.ts
+/.venv
