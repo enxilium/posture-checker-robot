@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Image from 'next/image'
 import { DashboardAnalytics } from "@/app/dashboard/dashboard-analytics"
+import robotIcon from "@/app/dashboard/robot.jpg"
 
 export const metadata: Metadata = {
   title: "Posture Analytics Dashboard",
@@ -107,7 +108,7 @@ export default function DashboardPage() {
           <div className="p-6 rounded-lg border bg-card">
             <div className="flex items-center gap-4 mb-4">
               <Image 
-                src="/robot-icon.png" 
+              src={robotIcon}
                 alt="Robot"
                 width={40}
                 height={40}
@@ -126,7 +127,39 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+ {/* Analytics Dashboard */}
+        <DashboardAnalytics />
 
+        {/* Progress Tracking */}
+        // Update the grid boxes with pink backgrounds
+<div className="grid grid-cols-4 gap-4">
+  <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
+    <h3 className="text-lg font-semibold">Daily Score</h3>
+    <p className="text-3xl font-bold">{mockUserData.postureScore}%</p>
+  </div>
+  
+  <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
+    <h3 className="text-lg font-semibold">Good Posture Time</h3>
+    <p className="text-3xl font-bold">{mockUserData.goodPostureTime}</p>
+  </div>
+  
+  <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
+    <h3 className="text-lg font-semibold">Exercises Done</h3>
+    <p className="text-3xl font-bold">{mockUserData.exercisesCompleted}</p>
+  </div>
+  
+  <div className="p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
+    <h3 className="text-lg font-semibold">Badges Earned</h3>
+    <p className="text-3xl font-bold">{mockUserData.badgesEarned}</p>
+  </div>
+</div>
+
+				  
+				  {/* Exercise Library */}
+				  <DashboardAnalytics />
+        <div className="p-6 rounded-lg border bg-card">
+          <h2 className="text-2xl font-bold mb-4">Exercise Library</h2>
+        </div>
           <div className="p-6 rounded-lg border bg-card">
             <h2 className="text-xl font-semibold mb-4">Quick Stats</h2>
             <div className="grid grid-cols-2 gap-4">
