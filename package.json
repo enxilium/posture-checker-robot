@@ -38,7 +38,7 @@
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.3.0",
-		"@types/node": "^20",
+		"@types/node": "^20.17.16",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"autoprefixer": "^10.0.1",
@@ -49,6 +49,10 @@
 		"prettier-plugin-tailwindcss": "^0.5.12",
 		"prisma": "^6.3.0",
 		"tailwindcss": "^3.3.0",
-		"typescript": "^5"
+		"ts-node": "^10.9.2",
+		"typescript": "^5.7.3"
+	},
+	"prisma": {
+		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
 	}
 }
