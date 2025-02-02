@@ -16,6 +16,14 @@ def calculate_angle(hip, shoulder):
 
 def sendWarning():
     print("Warning: Poor posture detected!")
+    ser = serial.Serial('COM6', 9600)  # COM6 and baud rate of 9600
+    time.sleep(2)  # Wait for the connection to establish
+
+    # Send a character (e.g., 'b') to the Arduino
+    ser.write(b'b')  # Send 'b' in byte format
+
+    # Close the serial connection
+    ser.close()
 
 # Use the system's temporary folder in a cross-platform manner (works on Windows and Linux)
 CACHE_FILE = os.path.join(tempfile.gettempdir(), "cache_user.json")
@@ -59,7 +67,8 @@ bad_pings = 0
 
 # Variables for continuous bad posture tracking
 bad_posture_start = None
-warning_sent = False
+last_warning_time = None  # Track time of last warning sent
+WARNING_INTERVAL = 3  # seconds
 
 while True:
     ret, frame = cap.read()
@@ -143,17 +152,19 @@ while True:
                 right_shoulder[0] <= 0 or right_shoulder[0] >= w or right_shoulder[1] <= 0 or right_shoulder[1] >= h):
                 posture_good = False
 
-        # Track continuous bad posture.
+        # Track continuous bad posture and send repeated warnings every 3 seconds.
+        current_time = time.time()
         if not posture_good:
             if bad_posture_start is None:
-                bad_posture_start = time.time()
-                warning_sent = False
-            elif not warning_sent and (time.time() - bad_posture_start) >= 3:
+                bad_posture_start = current_time
+                last_warning_time = current_time
                 sendWarning()
-                warning_sent = True
+            elif current_time - last_warning_time >= WARNING_INTERVAL:
+                sendWarning()
+                last_warning_time = current_time
         else:
             bad_posture_start = None
-            warning_sent = False
+            last_warning_time = None
 
         # Visualization of key points.
         color = (0, 255, 0) if posture_good else (0, 0, 255)
