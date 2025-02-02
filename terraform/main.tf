@@ -9,7 +9,7 @@ resource "aws_db_instance" "default" {
     allocated_storage = 20
     username = var.username
     password = var.password
-    publicly_accessible = false
+    publicly_accessible = true
     skip_final_snapshot = true
 }
 
