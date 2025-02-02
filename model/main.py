@@ -3,7 +3,7 @@ import time
 import math as m
 import mediapipe as mp
 import requests
-import os, json
+import os, json, tempfile
 
 def calculate_angle(shoulder, hip):
     delta_x = hip[0] - shoulder[0]
@@ -20,7 +20,8 @@ def sendWarning():
     except Exception as e:
         print("Error sending posture warning:", e)
 
-CACHE_FILE = "/tmp/cache_user.json"
+# Use the system's temporary folder in a cross-platform manner (works on Windows and Linux)
+CACHE_FILE = os.path.join(tempfile.gettempdir(), "cache_user.json")
 
 def read_cache():
     if os.path.exists(CACHE_FILE):

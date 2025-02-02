@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import * as fs from "fs/promises";
 import * as path from "path";
+import os from "os";
 
-const CACHE_FILE = path.join("/tmp", "cache_user.json");
+const CACHE_FILE = path.join(os.tmpdir(), "cache_user.json");
 
 export async function POST(request: Request) {
     try {
