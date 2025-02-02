@@ -12,3 +12,20 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  name           String?
+  postureRecords PostureRecord[]
+}
+
+model PostureRecord {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  startTime DateTime @default(dbgenerated("now() - interval '1 hour'"))
+  endTime   DateTime
+  score     Int
+  createdAt DateTime @default(now())
+}
