@@ -1,6 +1,6 @@
 # posture-checker-robot
 
-This is a basic React app with Tailwind CSS.
+Meet Fernando. Fernando detects poor posture in real time and provides instant feedback to help you sit while you're working or gaming for long-term health.
 
 ## Installation
 
